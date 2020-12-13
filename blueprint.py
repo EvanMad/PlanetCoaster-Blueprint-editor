@@ -16,7 +16,6 @@ class blueprint:
 		self.dataReader = reader(self.data)
 
 		self.metaPath = path + "/fcompressedsave_metadata"
-		print(self.metaPath)
 		self.metaData = open(str(self.metaPath), "rb").read()
 		self.metaData = self.deflateE(self.metaData)
 		self.metaData = self.metaData[16:]
@@ -60,11 +59,12 @@ class blueprint:
 		self.decompress = zlib.decompressobj(-15)
 		return (self.decompress.decompress(data))
 
-	def write_strings(self, edit):
-		print("AHH" + str(type(self.strings[0])))
+	def write_strings(self, edit, pcdir):
+		self.pcDir = pcdir
+		self.injectionPoint = "{}/Blueprints/Tracks/AethonBlueprint01.blueprint".format(self.pcDir)
 		out = str.encode(">") + str.encode(chr(len(self.strings))) + b'\xf3' + str.encode(edit[0])
 		for item in range(1, self.stringsCount):
-			print("Item {}, Length {}, Item {}".format(item, self.stringsCount, self.strings[item]))
+			#print("Item {}, Length {}, Item {}".format(item, self.stringsCount, self.strings[item]))
 			out = out + str.encode(chr(0)) + b'\xf3' + str.encode(edit[item])
 
 		a = self.data[:self.stringsPos-2]
@@ -73,4 +73,4 @@ class blueprint:
 		a = a + b
 
 		open(self.injectionPoint,"wb").write(a)
-		print(self.strings)
+		#print(self.strings)

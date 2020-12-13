@@ -319,9 +319,11 @@ class MainWindow(QMainWindow):
         self.initDir = ("{}/{}".format(str(Path.home()), "Saved Games/Frontier Developments/Planet Coaster/76561198169991941/Saves"))
         print(self.initDir)
         self.resize(420,500)
-        self.setWindowIcon(QtGui.QIcon('logo.jpg')) 
+        self.setWindowIcon(QtGui.QIcon('logo.jpg'))
 
         self.infoBoxes = []
+
+        self.pcDir = ""
 
         newfont = QFontComboBox
         self.text = QLabel("Coaster: ", self)
@@ -330,7 +332,7 @@ class MainWindow(QMainWindow):
 
         # Create new action
         injectAction = QAction(QIcon('new.png'), '&Inject', self)        
-        injectAction.setShortcut('Ctrl+N')
+        injectAction.setShortcut('Ctrl+I')
         injectAction.setStatusTip('Inject File into Game')
         injectAction.triggered.connect(self.saveCall)
 
@@ -377,10 +379,8 @@ class MainWindow(QMainWindow):
             self.initCombos()
 
     def saveCall(self):
-        print('Save')
-        try:
+        if self.pcDir:
             self.out = self.bp.strings
-            print(self.out)
             self.out[0] = self.coms[0].currentText()
             self.out[1] = self.coms[1].currentText()
             self.out[2] = self.bp.strings[2]
@@ -391,12 +391,13 @@ class MainWindow(QMainWindow):
                 self.out[3] = "NO_MUSIC"
                 for i, item in enumerate(self.coms):
                     self.out[2+i] = str(item.currentText())
-            print(self.bp.strings)
-            print(self.out)
-        except:
-            pass
             
-        self.bp.write_strings(self.out)
+            self.bp.write_strings(self.out, self.pcDir)
+            print('Injects')
+        else:
+            msg = QMessageBox()
+            msg.setText("No Planet Coaster Dir set \nGo to settings>dir to set")
+            msg.exec_()
 
     def exitCall(self):
         print('Exit app')
